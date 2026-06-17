@@ -14,10 +14,13 @@ class Concert(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     concert_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    venue: Mapped[str | None] = mapped_column(String(200), nullable=True)
     city: Mapped[str] = mapped_column(String(120), nullable=False)
     state_province: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    state_abbr: Mapped[str | None] = mapped_column(String(10), nullable=True)
     country: Mapped[str] = mapped_column(String(120), nullable=False)
     location_geopoint = mapped_column(Geography(geometry_type="POINT", srid=4326), nullable=False)
+    setlist_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     setlist_entries: Mapped[list["ConcertSetlistEntry"]] = relationship(

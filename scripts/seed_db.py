@@ -8,10 +8,14 @@ from collections.abc import Iterable
 from passlib.context import CryptContext
 from sqlalchemy import select
 
+from geoalchemy2 import WKTElement
+
 from app.database import AsyncSessionLocal
 from app.models import Album, Song
+from app.models.concert import Concert
 from app.models.user import User
 from scripts.albums_seed import ALBUMS
+from scripts.concerts_seed import CONCERTS_2026
 from scripts.songs_seed import ALBUM_SONGS, SONGS
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -82,6 +86,33 @@ def print_album_summary(albums: Iterable[dict[str, int | str]]) -> None:
         print(f"- {album['name']} ({album['year']})")
 
 
+async def seed_concerts() -> int:
+    from datetime import date
+    seeded = 0
+    async with AsyncSessionLocal() as session:
+        for c in CONCERTS_2026:
+            concert_date = date.fromisoformat(c["date"])
+            existing = await session.scalar(
+                select(Concert).where(Concert.concert_date == concert_date)
+            )
+            if existing:
+                continue
+            geopoint = WKTElement(f"POINT({c['lng']} {c['lat']})", srid=4326)
+            session.add(Concert(
+                concert_date=concert_date,
+                venue=c["venue"],
+                city=c["city"],
+                state_province=c["state_province"],
+                state_abbr=c["state_abbr"],
+                country=c["country"],
+                location_geopoint=geopoint,
+                setlist_url=c["setlist_url"],
+            ))
+            seeded += 1
+        await session.commit()
+    return seeded
+
+
 async def seed_test_user() -> int:
     async with AsyncSessionLocal() as session:
         existing = await session.scalar(select(User).where(User.email_address == "test@email.com"))
@@ -101,10 +132,12 @@ async def seed_test_user() -> int:
 async def main() -> None:
     seeded_albums = await seed_albums()
     seeded_songs = await seed_songs()
+    seeded_concerts = await seed_concerts()
     seeded_users = await seed_test_user()
     payload = preview_seed_payload()
     print(f"Inserted {seeded_albums} new albums.")
     print(f"Inserted {seeded_songs} new songs.")
+    print(f"Inserted {seeded_concerts} new concerts.")
     print(f"Inserted {seeded_users} test user(s).")
     print_album_summary(payload["albums"])
 
