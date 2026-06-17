@@ -1,6 +1,9 @@
-"""Studio album seed data for Phish."""
+"""Phish discography seed data sourced from phish.net/albums."""
 
 ALBUMS = [
+    # Pre-debut / archival
+    {"name": "The White Tape", "year": 1998},
+    # Studio albums
     {"name": "Junta", "year": 1989},
     {"name": "Lawn Boy", "year": 1990},
     {"name": "A Picture of Nectar", "year": 1992},
@@ -16,4 +19,27 @@ ALBUMS = [
     {"name": "Big Boat", "year": 2016},
     {"name": "Sigma Oasis", "year": 2020},
     {"name": "Evolve", "year": 2024},
+    # Other studio / archival
+    {"name": "The Siket Disc", "year": 1999},
+    {"name": "Party Time", "year": 2009},
+    # Live albums
+    {"name": "A Live One", "year": 1995},
+    {"name": "Hampton Comes Alive", "year": 1999},
+    {"name": "Live Phish 01", "year": 2002},
+    {"name": "Live Phish 02", "year": 2002},
+    {"name": "Live Phish 03", "year": 2002},
+    {"name": "Live Phish 04", "year": 2002},
+    {"name": "Live Phish 05", "year": 2002},
+    {"name": "Live Phish 06", "year": 2002},
+    {"name": "Live Phish 08", "year": 2002},
+    {"name": "Live Phish 09", "year": 2002},
+    {"name": "Live Phish 10", "year": 2002},
+    {"name": "Live Phish 13", "year": 2002},
+    {"name": "Live Phish 14", "year": 2002},
+    {"name": "Live Phish 15", "year": 2002},
+    {"name": "Live Phish 16", "year": 2002},
+    {"name": "Live Phish 17", "year": 2002},
+    {"name": "Live Phish 18", "year": 2002},
+    {"name": "Live Phish 19", "year": 2002},
+    {"name": "Live Phish 20", "year": 2002},
 ]
