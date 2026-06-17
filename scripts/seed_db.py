@@ -10,6 +10,7 @@ from sqlalchemy import select
 
 from app.database import AsyncSessionLocal
 from app.models import Album, Song
+from app.models.user import User
 from scripts.albums_seed import ALBUMS
 from scripts.songs_seed import ALBUM_SONGS, SONGS
 
@@ -81,12 +82,30 @@ def print_album_summary(albums: Iterable[dict[str, int | str]]) -> None:
         print(f"- {album['name']} ({album['year']})")
 
 
+async def seed_test_user() -> int:
+    async with AsyncSessionLocal() as session:
+        existing = await session.scalar(select(User).where(User.email_address == "test@email.com"))
+        if existing:
+            return 0
+        session.add(User(
+            first_name="Test",
+            last_name="User",
+            email_address="test@email.com",
+            password_hash=pwd_context.hash("Password123"),
+            slug="test-user",
+        ))
+        await session.commit()
+    return 1
+
+
 async def main() -> None:
     seeded_albums = await seed_albums()
     seeded_songs = await seed_songs()
+    seeded_users = await seed_test_user()
     payload = preview_seed_payload()
     print(f"Inserted {seeded_albums} new albums.")
     print(f"Inserted {seeded_songs} new songs.")
+    print(f"Inserted {seeded_users} test user(s).")
     print_album_summary(payload["albums"])
 
 
